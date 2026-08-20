@@ -1,0 +1,69 @@
+import heapq
+
+def best_first_search(graph, heuristic, start, goal):
+    open_list = []
+    heapq.heappush(open_list, (heuristic[start], start))
+
+    parent = {start: None}
+    closed = set()
+
+    while open_list:
+        h, current = heapq.heappop(open_list)
+
+        if current in closed:
+            continue
+
+        closed.add(current)
+
+        print("Current Node:", current)
+        print("OPEN:", [node for _, node in open_list])
+        print("CLOSED:", list(closed))
+        print()
+
+        if current == goal:
+            path = []
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+
+            path.reverse()
+            print("Goal Node Reached")
+            print("Final Path:", " -> ".join(path))
+            return path
+
+        for neighbor in graph[current]:
+            if neighbor not in closed:
+                if neighbor not in parent:
+                    parent[neighbor] = current
+                    heapq.heappush(open_list, (heuristic[neighbor], neighbor))
+
+    print("Goal Node Not Found")
+    return None
+
+
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': ['H'],
+    'F': [],
+    'G': ['H'],
+    'H': []
+}
+
+heuristic = {
+    'A': 8,
+    'B': 6,
+    'C': 4,
+    'D': 7,
+    'E': 3,
+    'F': 5,
+    'G': 2,
+    'H': 0
+}
+
+start = 'A'
+goal = 'H'
+
+best_first_search(graph, heuristic, start, goal)
